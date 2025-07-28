@@ -1,3 +1,91 @@
+
+function openDialog() {
+    let form = document.querySelector("#signinDialog form"); 
+    form.reset();
+    
+    document.getElementById("signinDialog").showModal(); 
+}
+document.addEventListener("DOMContentLoaded", () => {
+  const registerLink = document.getElementById("link1");
+  const registerDialog = document.getElementById("registerDialog");
+  const signinDialog = document.getElementById("signinDialog");
+
+  registerLink.addEventListener("click", () => {
+    // Close Sign-In if it's open
+    if (signinDialog.open) signinDialog.close();
+
+    // Then open Register dialog
+    registerDialog.showModal();
+  });
+});
+document.addEventListener("DOMContentLoaded", () => {
+  const registerLink = document.getElementById("link2");
+  const registerDialog = document.getElementById("registerDialog");
+  const signinDialog = document.getElementById("signinDialog");
+
+  registerLink.addEventListener("click", () => {
+    // Close Sign-In if it's open
+    if (registerDialog.open)registerDialog.close();
+
+    // Then open Register dialog
+    signinDialog.showModal();
+  });
+});
+
+document.querySelectorAll(".toggle-password").forEach((toggle) => {
+    // Insert eye-slash icon
+    toggle.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
+
+    toggle.addEventListener("click", () => {
+      const targetId = toggle.getAttribute("data-target");
+      const input = document.getElementById(targetId);
+      const icon = toggle.querySelector("i");
+
+      if (input) {
+        const isVisible = input.type === "text";
+        input.type = isVisible ? "password" : "text";
+
+        // Toggle icon class
+        if (isVisible) {
+          icon.classList.remove("fa-eye");
+          icon.classList.add("fa-eye-slash");
+        } else {
+          icon.classList.remove("fa-eye-slash");
+          icon.classList.add("fa-eye");
+        }
+      }
+    });
+  });
+
+
+
+
+document.getElementById('confirmPassword').addEventListener('input', function () {
+  const password = document.getElementById('password').value;
+  const confirmPassword = this.value;
+  const messageEl = document.getElementById('passwordMatchMessage');
+
+  if (confirmPassword === password) {
+    messageEl.textContent = '✅ Passwords match';
+    messageEl.style.color = 'green';
+  } else {
+    messageEl.textContent = '❌ Passwords do not match';
+    messageEl.style.color = 'red';
+  }
+});
+document.querySelector('form').addEventListener('submit', function (event) {
+  const password = document.getElementById('password').value;
+  const confirmPassword = document.getElementById('confirmPassword').value;
+
+  if (password !== confirmPassword) {
+    event.preventDefault(); // Stop the form from submitting
+    alert('Passwords do not match! Please fix it before submitting.');
+  }
+});
+
+
+
+//for calander
 const calendar = document.querySelector(".calendar"),
   date = document.querySelector(".date"),
   daysContainer = document.querySelector(".days"),
@@ -14,6 +102,9 @@ let today = new Date();
 let activeDay;
 let month = today.getMonth();
 let year = today.getFullYear();
+let selectedDay = null;
+let selectedMonth = null;
+let selectedYear = null;
 
 const months = [
   "January",
@@ -102,6 +193,28 @@ function initCalendar() {
         days += `<div class="day today active">${i}</div>`;
       }
     }
+    else if(
+       selectedDay !== null &&
+       selectedMonth !== null &&
+       selectedYear !== null &&
+       i === selectedDay &&
+       year === selectedYear &&
+       month === selectedMonth
+
+
+
+    ){ 
+      activeDay = i;
+      getActiveDay(i);
+      updateEvents(i);
+      //if event found add also event class also on selected day
+       //add active on selected day at start up
+        if (event) {
+        days += `<div class="day  active event">${i}</div>`;
+      } else {
+        days += `<div class="day  active">${i}</div>`;
+      }
+    }
     //add remaining as it is
     else{
         if (event) {
@@ -156,33 +269,44 @@ todayBtn.addEventListener("click", () => {
 });
 
 dateInput.addEventListener("input", (e) => {
-    //only allow numbers and removing anything else
+  // only allow numbers and slashes
   dateInput.value = dateInput.value.replace(/[^0-9/]/g, "");
-  if (dateInput.value.length === 2) {
-    //add slash if two numbers entered
+
+  // automatically insert slashes after MM and DD
+  if (dateInput.value.length === 2 && !dateInput.value.includes("/")) {
     dateInput.value += "/";
   }
-  if (dateInput.value.length > 7) {
-    //dont allow more than 7 character
-    dateInput.value = dateInput.value.slice(0, 7);
+  if (dateInput.value.length === 5 && dateInput.value.split("/").length < 3) {
+    dateInput.value += "/";
   }
-  //if backspace pressed
+
+  // restrict to MM/DD/YYYY (10 characters including slashes)
+  if (dateInput.value.length > 10) {
+    dateInput.value = dateInput.value.slice(0, 10);
+  }
+
+  // handle backspace just after a slash to remove it too
   if (e.inputType === "deleteContentBackward") {
-    if (dateInput.value.length === 3) {
-      dateInput.value = dateInput.value.slice(0, 2);
+    if (dateInput.value.length === 3 || dateInput.value.length === 6) {
+      dateInput.value = dateInput.value.slice(0, dateInput.value.length - 1);
     }
   }
 });
+
+
 
 gotoBtn.addEventListener("click", gotoDate);
 
 function gotoDate() {
   console.log("here");
   const dateArr = dateInput.value.split("/");
-  if (dateArr.length === 2) {
-    if (dateArr[0] > 0 && dateArr[0] < 13 && dateArr[1].length === 4) {
-      month = dateArr[0] - 1;
-      year = dateArr[1];
+  if (dateArr.length === 3) {
+    if (dateArr[0] > 0 && dateArr[0] < 13 && dateArr[1] > 0 && dateArr[1] < 32 &&  dateArr[2].length === 4) {
+      selectedDay = parseInt(dateArr[1]);
+      selectedMonth = parseInt(dateArr[0]) - 1;
+      selectedYear = parseInt(dateArr[2]);
+      month = selectedMonth;  
+      year = selectedYear;    
       initCalendar();
       return;
     }
@@ -215,24 +339,48 @@ addEventTitle.addEventListener("input", (e) => {
   addEventTitle.value = addEventTitle.value.slice(0, 50);
 });
 
-addEventFrom.addEventListener("input", (e) => {
-  addEventFrom.value = addEventFrom.value.replace(/[^0-9:]/g, "");
-  if (addEventFrom.value.length === 2) {
-    addEventFrom.value += ":";
-  }
-  if (addEventFrom.value.length > 5) {
-    addEventFrom.value = addEventFrom.value.slice(0, 5);
-  }
-});
 
+addEventFrom.addEventListener("input", (e) => {
+  let value = addEventFrom.value.replace(/[^0-9:]/g, "");
+
+  if (e.inputType === "deleteContentBackward") {
+    // Clean up dangling colon
+    if (value.length === 3 && value.endsWith(":")) {
+      value = value.slice(0, 2);
+    }
+  } else {
+    // Auto-insert colon after HH
+    if (value.length === 2) {
+      value += ":";
+    }
+  }
+
+  if (value.length > 5) {
+    value = value.slice(0, 5);
+  }
+
+  addEventFrom.value = value;
+});
 addEventTo.addEventListener("input", (e) => {
-  addEventTo.value = addEventTo.value.replace(/[^0-9:]/g, "");
-  if (addEventTo.value.length === 2) {
-    addEventTo.value += ":";
+  let value = addEventTo.value.replace(/[^0-9:]/g, "");
+
+  if (e.inputType === "deleteContentBackward") {
+    // Clean up dangling colon
+    if (value.length === 3 && value.endsWith(":")) {
+      value = value.slice(0, 2);
+    }
+  } else {
+    // Auto-insert colon after HH
+    if (value.length === 2) {
+      value += ":";
+    }
   }
-  if (addEventTo.value.length > 5) {
-    addEventTo.value = addEventTo.value.slice(0, 5);
+
+  if (value.length > 5) {
+    value = value.slice(0, 5);
   }
+
+  addEventTo.value = value;
 });
 
 //function to add active on day
@@ -460,3 +608,16 @@ function convertTime(time) {
   time = timeHour + ":" + timeMin + " " + timeFormat;
   return time;
 }
+document.addEventListener("DOMContentLoaded", function () {
+  const signInButton = document.querySelector(".sign-in button");
+
+  // Add the animation class on hover
+  signInButton.classList.add("animate-hover");
+
+  // Remove the animation class after button is clicked
+  signInButton.addEventListener("click", function () {
+    this.classList.remove("animate-hover");
+  });
+});
+
+
