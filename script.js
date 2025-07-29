@@ -388,49 +388,44 @@ function addListner() {
   const days = document.querySelectorAll(".day");
   days.forEach((day) => {
     day.addEventListener("click", (e) => {
-      //set current day as active day
+      // Set the clicked day
       activeDay = Number(e.target.innerHTML);
-      
-      //call active day after click
-      getActiveDay(activeDay);
-      updateEvents(activeDay);
 
-      //remove active from already active day
+      // Remove active class from all days
       days.forEach((day) => {
         day.classList.remove("active");
       });
-      //if clicked prev-date or next-date switch to that month
+
+      // Check if it's a prev or next date and switch month accordingly
       if (e.target.classList.contains("prev-date")) {
         prevMonth();
-        //add active to clicked day after month is change
         setTimeout(() => {
-          //add active where no prev-date or next-date
-          const days = document.querySelectorAll(".day");
-          days.forEach((day) => {
-            if (
-              !day.classList.contains("prev-date") &&
-              day.innerHTML === e.target.innerHTML
-            ) {
+          const newDays = document.querySelectorAll(".day");
+          newDays.forEach((day) => {
+            if (!day.classList.contains("prev-date") && Number(day.innerHTML) === activeDay) {
               day.classList.add("active");
+              getActiveDay(activeDay);
+              updateEvents(activeDay);
             }
           });
         }, 100);
       } else if (e.target.classList.contains("next-date")) {
         nextMonth();
-        //add active to clicked day afte month is changed
         setTimeout(() => {
-          const days = document.querySelectorAll(".day");
-          days.forEach((day) => {
-            if (
-              !day.classList.contains("next-date") &&
-              day.innerHTML === e.target.innerHTML
-            ) {
+          const newDays = document.querySelectorAll(".day");
+          newDays.forEach((day) => {
+            if (!day.classList.contains("next-date") && Number(day.innerHTML) === activeDay) {
               day.classList.add("active");
+              getActiveDay(activeDay);
+              updateEvents(activeDay);
             }
           });
         }, 100);
       } else {
+        // Normal day clicked
         e.target.classList.add("active");
+        getActiveDay(activeDay);
+        updateEvents(activeDay);
       }
     });
   });
