@@ -61,11 +61,28 @@ body {
     transform: scale(1.09);
 }
 .popup__header {
-    font-size: 2rem;
-    line-height: 2.375rem;
-    font-weight: 700;
+  font-size: 2rem;
+  line-height: 2.375rem;
+  font-weight: 700;  
+  width: 100%;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  margin-bottom: 10px;
+}
+
+.popup__header .close-btn {
+  
+  cursor: pointer;
+  color: #ee2e24;
+}
+.popup__header .close-btn:hover {
+  color: var(--primary-clr);
+}
+.popup__header .title {
     color: #000;
-    margin: 0 0 .9375rem;
 }
 .popup__description {
     font-size: 20px;

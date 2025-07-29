@@ -16,7 +16,10 @@
 </head>
 <body>
     <dialog id="signinDialog">
-                <div class="popup__header">My Account</div>
+                <div class="popup__header">
+                    <div class="title">My Account</div>
+                    <i class="fas fa-times close-btn" data-target="signinDialog"></i>
+                </div>
                 <div class="popup__description"> No account yet? <span class="link" id="link1">Register now!</span></div>
                 <form method="GET" action="/your-login-endpoint" class="form-content">
                     <div class="form-group">
@@ -41,7 +44,10 @@
                 </form>
     </dialog>
     <dialog id="registerDialog">
-                <div class="popup__header">Create an account</div>
+                <div class="popup__header">
+                    <div class="title">Create an account</div>
+                    <i class="fas fa-times close-btn" data-target="registerDialog"></i>
+                </div>
                 <div class="popup__description"> Already have an account? <span class="link" id="link2">Sign!</span></div>
                 <form method="GET" action="/your-login-endpoint" class="form-content">
                     <div class="form-group">

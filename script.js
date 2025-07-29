@@ -56,6 +56,18 @@ document.querySelectorAll(".toggle-password").forEach((toggle) => {
       }
     });
   });
+document.querySelectorAll(".close-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const targetId = btn.getAttribute("data-target");
+    const dialog = document.getElementById(targetId);
+    if (dialog && dialog.open) dialog.close();
+  });
+});
+
+
+
+
+
 
 
 
