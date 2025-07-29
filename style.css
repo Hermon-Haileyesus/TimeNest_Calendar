@@ -255,7 +255,7 @@ dialog input:focus::placeholder {
   height: 80px;
   background: radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent 60%);
   border-radius: 50%;
-  z-index: 0;
+  z-index: -1;
 }
 
 .calendar .month {
@@ -321,7 +321,7 @@ dialog input:focus::placeholder {
 }
 .calendar .days .prev-date,
 .calendar .days .next-date {
-  color: #b3b3b371;
+  color: #b3b3b3;
 }
 .calendar .days .active {
   position: relative;
